@@ -50,13 +50,14 @@ function summarizeToolResult(tool: string, args: Record<string, unknown>, result
       }
       if (typeof parsed.data === 'object') {
         const keys = Object.keys(parsed.data).filter((key) => !key.startsWith('_'));
+        const cachedStr = parsed.cached ? ' (from cache)' : '';
         if (tool === 'get_financials' || tool === 'get_market_data' || tool === 'stock_screener') {
-          return keys.length === 1 ? 'Called 1 data source' : `Called ${keys.length} data sources`;
+          return keys.length === 1 ? `Called 1 data source${cachedStr}` : `Called ${keys.length} data sources${cachedStr}`;
         }
         if (tool === 'web_search') {
-          return 'Did 1 search';
+          return `Did 1 search${cachedStr}`;
         }
-        return `Received ${keys.length} fields`;
+        return `Received ${keys.length} fields${cachedStr}`;
       }
     }
   } catch {
@@ -173,6 +174,7 @@ export async function runCli() {
 
   const modelSelection = new ModelSelectionController(onError, () => {
     intro.setModel(modelSelection.model);
+    agentRunner.updateConfig({ model: modelSelection.model, modelProvider: modelSelection.provider });
     renderSelectionOverlay();
     tui.requestRender();
   });

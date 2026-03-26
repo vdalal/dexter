@@ -20,7 +20,7 @@ export class AgentRunnerController {
   private workingStateValue: WorkingState = { status: 'idle' };
   private errorValue: string | null = null;
   private pendingApprovalValue: { tool: string; args: Record<string, unknown> } | null = null;
-  private readonly agentConfig: AgentConfig;
+  private agentConfig: AgentConfig;
   private readonly inMemoryChatHistory: InMemoryChatHistory;
   private readonly onChange?: ChangeListener;
   private abortController: AbortController | null = null;
@@ -35,6 +35,10 @@ export class AgentRunnerController {
     this.agentConfig = agentConfig;
     this.inMemoryChatHistory = inMemoryChatHistory;
     this.onChange = onChange;
+  }
+
+  updateConfig(config: Partial<AgentConfig>) {
+    this.agentConfig = { ...this.agentConfig, ...config };
   }
 
   get history(): HistoryItem[] {
